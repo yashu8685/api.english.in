@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "src",
+    "tests",
+    "scripts/test-db.ts",
+    "scripts/smoke-live.ts",
+    "vitest.config.ts",
+    "drizzle.config.ts",
+    "tsup.config.ts",
+    "contracts.ts"
+  ]
+}
