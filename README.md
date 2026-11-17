@@ -128,6 +128,21 @@ malformed values stop the process with a readable message.
 | `npm run smoke:live` | Check the real `DATABASE_URL` and `OPENAI_*` values end to end, then delete the throwaway user |
 | `npm run setup` | `npm install` + migrate + seed |
 
+### Troubleshooting: `EADDRINUSE: address already in use :::8787`
+
+The API is already running somewhere — usually a second `npm run dev` in another
+terminal, or a `tsx watch` left over from an earlier session. Check and free it:
+
+```bash
+ss -ltnp | grep ':8787'     # shows the PID holding the port
+fuser -k 8787/tcp           # stop it
+npm run dev                 # start a single instance
+```
+
+`src/index.ts` now prints exactly this hint instead of an unhandled `'error'`
+stack trace. Never run two API dev servers: the second one cannot bind and
+`tsx watch` will keep retrying on every file change.
+
 ## How it works
 
 ### Request lifecycle

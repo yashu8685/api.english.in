@@ -15,6 +15,20 @@ const server = serve(
   }
 );
 
+// A second `npm run dev` hits EADDRINUSE. Print the fix instead of a raw
+// unhandled 'error' stack trace.
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`\n  Port ${env.PORT} is already in use.`);
+    console.error(`  Another API process is probably running. Stop it with:`);
+    console.error(`\n      fuser -k ${env.PORT}/tcp\n`);
+    console.error(`  Then start this server again, or set a different PORT in api/.env.\n`);
+  } else {
+    console.error(`\n  The API server could not start: ${error.message}\n`);
+  }
+  process.exit(1);
+});
+
 function shutdown(signal: string): void {
   console.log(`\n${signal} received — closing server`);
   server.close(() => process.exit(0));
